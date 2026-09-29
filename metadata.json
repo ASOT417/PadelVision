@@ -1,0 +1,6 @@
+{
+  "name": "PadelVision",
+  "description": "AI-powered Padel match analytics and court tracking with homography mapping, shot heatmaps, and SwingVision-style metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

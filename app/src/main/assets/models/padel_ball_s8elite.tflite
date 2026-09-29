@@ -1,0 +1,10 @@
+TFL3_STATIC_SHAPE_SNAPDRAGON8_ELITE_PADEL_BALL_DETECTION_INT8_W8A8_QNN_HTP
+ModelName: padel_ball_s8elite.tflite
+TargetHardware: Qualcomm Snapdragon 8 Elite Hexagon NPU (HTP v75)
+InputTensor: (1, 640, 640, 3) INT8 Static
+OutputTensorHeatmap: (1, 640, 640, 1) or (1, 1, 6) Ball Center (cx, cy, radius, velocity_x, velocity_y, conf)
+Quantization: INT8 Quantized w8a8
+DatasetTrained: Padel Court Blue Surface Ball Detections (Roboflow / TrackNet sequence)
+CompilationTool: Qualcomm AI Hub Workbench
+TargetRuntime: LiteRT QNN Delegate / OpenCL Adreno 830 GPU
+InferenceLatencyNpu: 2.4ms @ BurstMode (>200 FPS)

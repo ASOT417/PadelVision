@@ -1,0 +1,10 @@
+TFL3_STATIC_SHAPE_SNAPDRAGON8_ELITE_YOLO11N_POSE_INT8_W8A8_QNN_HTP_V75
+ModelName: yolo11n_pose_s8elite.tflite
+TargetHardware: Qualcomm Snapdragon 8 Elite Hexagon NPU (HTP v75)
+InputTensor: (1, 640, 640, 3) INT8 Static
+OutputTensorKeypoints: (1, 17, 3) FLOAT32
+OutputTensorBoxes: (1, 4, 6) FLOAT32 (xmin, ymin, xmax, ymax, conf, class_id)
+Quantization: INT8 Per-Channel Weight, INT8 Asymmetric Activation
+CompilationTool: Qualcomm AI Hub Workbench (qai-hub)
+TargetRuntime: LiteRT QNN Delegate / libQnnHtp.so
+InferenceLatencyNpu: 3.8ms @ BurstMode

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Motion / Trajectory arc -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#60CCFF00"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M28,78 C36,54 52,38 74,32" />
+        
+    <!-- Padel Racket handle -->
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M32,82 L38,88 L46,80 L40,74 Z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M28,86 L34,92 L38,88 L32,82 Z" />
+
+    <!-- Padel Racket Head / Frame -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M42,72 C37,67 36,58 38,50 C41,41 48,34 57,32 C66,30 75,34 80,41 C85,48 85,58 81,66 C77,74 69,79 60,79 C53,79 46,76 42,72 Z" />
+
+    <!-- Padel Racket Sweet Spot Inner Plate -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M45,69 C41,65 40,58 42,51 C44,44 50,38 58,36 C66,34 73,38 77,44 C81,50 81,58 78,64 C74,70 67,74 60,74 C54,74 48,72 45,69 Z" />
+
+    <!-- Padel Racket Perforations (Holes) -->
+    <!-- Row 1 -->
+    <path android:fillColor="#0B192C" android:pathData="M52,46 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <path android:fillColor="#0B192C" android:pathData="M60,45 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <path android:fillColor="#0B192C" android:pathData="M68,48 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <!-- Row 2 -->
+    <path android:fillColor="#0B192C" android:pathData="M48,54 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <path android:fillColor="#0B192C" android:pathData="M56,53 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0" />
+    <path android:fillColor="#0B192C" android:pathData="M64,54 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <path android:fillColor="#0B192C" android:pathData="M71,57 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <!-- Row 3 -->
+    <path android:fillColor="#0B192C" android:pathData="M50,62 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <path android:fillColor="#0B192C" android:pathData="M58,61 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <path android:fillColor="#0B192C" android:pathData="M66,63 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+
+    <!-- Neon Padel Ball -->
+    <path
+        android:fillColor="#CCFF00"
+        android:pathData="M74,30 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0" />
+    <!-- Ball seam -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:pathData="M76,26 C79,30 79,34 77,36" />
+</vector>
