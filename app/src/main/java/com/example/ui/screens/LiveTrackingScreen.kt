@@ -110,6 +110,7 @@ fun LiveTrackingScreen(
     val isAlicePrewarming by viewModel.isAlicePrewarming.collectAsStateWithLifecycle()
     val autoCvScoreEnabled by viewModel.autoCvScoreEnabled.collectAsStateWithLifecycle()
     val npuStats by viewModel.npuStats.collectAsStateWithLifecycle()
+    val isSimulation by viewModel.isSimulationMode.collectAsStateWithLifecycle()
 
     val currentMatch by viewModel.currentMatch.collectAsStateWithLifecycle()
     val recognizedPlayers by viewModel.recognizedPlayers.collectAsStateWithLifecycle()
@@ -744,10 +745,49 @@ fun LiveTrackingScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (isTracking) "Остановить трекинг корта" else "Запустить трекинг (60 FPS)",
+                            text = if (isTracking) "Остановить трекинг корта" else if (isSimulation) "Запустить ДЕМО-симуляцию" else "Запустить ТРЕКИНГ МАТЧА (Камера)",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
+                    }
+
+                    // Переключатель: Реальный матч (Камера) или Демо-симуляция
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            FilterChip(
+                                selected = !isSimulation,
+                                onClick = { viewModel.setSimulationMode(false) },
+                                label = { Text("⚡ Реальный матч", fontSize = 11.sp, fontWeight = if (!isSimulation) FontWeight.Bold else FontWeight.Normal) }
+                            )
+                            FilterChip(
+                                selected = isSimulation,
+                                onClick = { viewModel.setSimulationMode(true) },
+                                label = { Text("🎮 Демо без корта", fontSize = 11.sp, fontWeight = if (isSimulation) FontWeight.Bold else FontWeight.Normal) }
+                            )
+                        }
+
+                        if (isTracking) {
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = if (ballPos != null) Color(0xFF10B981).copy(alpha = 0.2f) else Color.Gray.copy(alpha = 0.2f)
+                            ) {
+                                Text(
+                                    text = if (ballPos != null) "МЯЧ В КАДРЕ" else "ПОИСК МЯЧА",
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (ballPos != null) Color(0xFF10B981) else Color.LightGray,
+                                    fontSize = 10.sp
+                                )
+                            }
+                        }
                     }
 
                     Row(

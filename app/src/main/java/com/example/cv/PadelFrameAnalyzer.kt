@@ -72,15 +72,17 @@ class PadelFrameAnalyzer(
                 }
             }
 
+            // Оптимизированные пороги для быстрого падел-мяча в реальных условиях освещения
             val motionIntensity = totalMotion / (sampledWidth * sampledHeight).toFloat()
 
-            if (maxDiff > 45 && motionIntensity > 0.5f) {
+            if (maxDiff > 25 && motionIntensity > 0.15f) {
                 val normU = maxDiffX.toFloat() / sampledWidth
                 val normV = maxDiffY.toFloat() / sampledHeight
 
                 val currentVelV = (normV - (prevBallV ?: normV))
-                // Отскок мяча от корта: смена знака вертикальной скорости (летел вниз -> полетел вверх)
-                val isBounce = prevVelocityV > 0.015f && currentVelV < -0.01f
+                // Отскок мяча от покрытия: резкая сдвижка по вертикали или смена направления
+                val isBounce = (prevVelocityV > 0.008f && currentVelV < -0.005f) ||
+                               (Math.abs(currentVelV - prevVelocityV) > 0.025f)
 
                 prevVelocityV = currentVelV
                 prevBallU = normU

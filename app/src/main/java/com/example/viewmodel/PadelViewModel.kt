@@ -493,10 +493,27 @@ class PadelViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    val isSimulationMode = MutableStateFlow<Boolean>(false)
+
     fun toggleTracking() {
         val current = isTrackingActive.value
         isTrackingActive.value = !current
         if (!current) {
+            if (isSimulationMode.value) {
+                startTrackingSimulation()
+            } else {
+                // Боевой режим: очищаем старые координаты и слушаем чистый поток с камеры
+                detectedBallScreenPos.value = null
+                recentDetectionsCount.value = 0
+            }
+        } else {
+            detectedBallScreenPos.value = null
+        }
+    }
+
+    fun setSimulationMode(enabled: Boolean) {
+        isSimulationMode.value = enabled
+        if (enabled && isTrackingActive.value) {
             startTrackingSimulation()
         }
     }
@@ -504,7 +521,7 @@ class PadelViewModel(application: Application) : AndroidViewModel(application) {
     private fun startTrackingSimulation() {
         viewModelScope.launch {
             var counter = 0
-            while (isTrackingActive.value) {
+            while (isTrackingActive.value && isSimulationMode.value) {
                 kotlinx.coroutines.delay(120)
                 val screenU = Random.nextDouble(0.2, 0.8).toFloat()
                 val screenV = Random.nextDouble(0.3, 0.85).toFloat()
@@ -519,7 +536,9 @@ class PadelViewModel(application: Application) : AndroidViewModel(application) {
                     addManualBounce(courtPt.x, courtPt.y, speed)
                 }
             }
-            detectedBallScreenPos.value = null
+            if (!isTrackingActive.value) {
+                detectedBallScreenPos.value = null
+            }
         }
     }
 
