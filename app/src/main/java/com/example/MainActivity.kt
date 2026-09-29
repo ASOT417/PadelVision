@@ -1,5 +1,6 @@
 package com.example
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
@@ -77,6 +78,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 var currentScreen by remember { mutableStateOf(AppScreen.TRACKER) }
+
+                // Автоматический запрос разрешения камеры через Compose API
+                val permissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+                    contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+                ) { isGranted ->
+                    viewModel.isCameraPermissionGranted.value = isGranted
+                }
+
+                androidx.compose.runtime.LaunchedEffect(Unit) {
+                    val hasCam = androidx.core.content.ContextCompat.checkSelfPermission(
+                        this@MainActivity,
+                        android.Manifest.permission.CAMERA
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                    if (hasCam) {
+                        viewModel.isCameraPermissionGranted.value = true
+                    } else {
+                        permissionLauncher.launch(android.Manifest.permission.CAMERA)
+                    }
+                }
 
                 BackHandler(enabled = currentScreen != AppScreen.TRACKER) {
                     currentScreen = AppScreen.TRACKER
@@ -215,6 +235,7 @@ class MainActivity : ComponentActivity() {
      * Play/Pause = Повторить текущий счёт голосом в колонку
      * Двойной Play/Pause = Отмена последнего действия (Undo)
      */
+    @SuppressLint("RestrictedApi")
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val action = event.action
         val keyCode = event.keyCode

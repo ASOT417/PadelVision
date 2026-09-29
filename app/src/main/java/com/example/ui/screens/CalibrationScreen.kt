@@ -2,6 +2,7 @@ package com.example.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -66,6 +67,7 @@ fun CalibrationScreen(
     val points by viewModel.calibrationPoints.collectAsStateWithLifecycle()
     val homography by viewModel.homographyEngine.collectAsStateWithLifecycle()
 
+    var useRealCamera by remember { mutableStateOf(true) }
     var testPointScreen by remember { mutableStateOf<Pair<Float, Float>?>(Pair(0.5f, 0.5f)) }
     var testPointCourt by remember {
         mutableStateOf(homography.pixelToCourt(0.5f, 0.5f))
@@ -139,16 +141,41 @@ fun CalibrationScreen(
                             )
                         }
 
-                        Text(
-                            text = "OnePlus 15 (0.6x)",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF38BDF8)
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = Color.White.copy(alpha = 0.1f),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .clickable { useRealCamera = !useRealCamera }
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.CameraAlt,
+                                        contentDescription = null,
+                                        tint = if (useRealCamera) Color(0xFF10B981) else Color(0xFF94A3B8),
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = if (useRealCamera) "Камера активна" else "Схема корта",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = if (useRealCamera) Color(0xFF10B981) else Color(0xFF94A3B8)
+                                    )
+                                }
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Calibration interactive Canvas
+                    // Calibration interactive Canvas with CameraX Preview background
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -156,6 +183,9 @@ fun CalibrationScreen(
                             .clip(RoundedCornerShape(10.dp))
                             .background(Color(0xFF090D16))
                     ) {
+                        if (useRealCamera) {
+                            RealCameraPreview(viewModel = viewModel)
+                        }
                         Canvas(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -204,14 +234,15 @@ fun CalibrationScreen(
                             val w = size.width
                             val h = size.height
 
-                            // Draw simulated court camera perspective background
-                            // Far wall baseline
-                            drawLine(
-                                color = Color(0x3038BDF8),
-                                start = Offset(0f, h * 0.45f),
-                                end = Offset(w, h * 0.45f),
-                                strokeWidth = 1f
-                            )
+                            // Draw simulated court camera perspective background only if camera is off
+                            if (!useRealCamera) {
+                                drawLine(
+                                    color = Color(0x3038BDF8),
+                                    start = Offset(0f, h * 0.45f),
+                                    end = Offset(w, h * 0.45f),
+                                    strokeWidth = 1f
+                                )
+                            }
 
                             // 1. Draw Homography Quad Polygon
                             if (points.size == 4) {

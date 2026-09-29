@@ -114,7 +114,7 @@ fun LiveTrackingScreen(
     val currentMatch by viewModel.currentMatch.collectAsStateWithLifecycle()
     val recognizedPlayers by viewModel.recognizedPlayers.collectAsStateWithLifecycle()
 
-    var useRealCameraPreview by remember { mutableStateOf(false) }
+    var useRealCameraPreview by remember { mutableStateOf(true) }
     var showScoreModeDialog by remember { mutableStateOf(false) }
 
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
@@ -636,6 +636,12 @@ fun LiveTrackingScreen(
                 Box(modifier = Modifier.fillMaxSize()) {
                     if (useRealCameraPreview) {
                         RealCameraPreview(viewModel = viewModel)
+                        // Наложение контуров корта и трекинга поверх живого кадра
+                        LiveCameraTrackingOverlay(
+                            calibrationPoints = calibrationPoints,
+                            ballPos = ballPos,
+                            isTracking = isTracking
+                        )
                     } else {
                         // Виртуальный кадр с перспективой корта
                         VirtualCourtCameraFeed(
@@ -1078,6 +1084,79 @@ fun VirtualCourtCameraFeed(
                 radius = 16.dp.toPx(),
                 center = ballOffset,
                 style = Stroke(width = 2.dp.toPx())
+            )
+        }
+    }
+}
+
+@Composable
+fun LiveCameraTrackingOverlay(
+    calibrationPoints: List<com.example.model.CourtCalibrationPoint>,
+    ballPos: Pair<Float, Float>?,
+    isTracking: Boolean
+) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val w = size.width
+        val h = size.height
+
+        val tl = calibrationPoints.getOrNull(0)
+        val tr = calibrationPoints.getOrNull(1)
+        val br = calibrationPoints.getOrNull(2)
+        val bl = calibrationPoints.getOrNull(3)
+
+        if (tl != null && tr != null && br != null && bl != null) {
+            val pTL = Offset(tl.screenX * w, tl.screenY * h)
+            val pTR = Offset(tr.screenX * w, tr.screenY * h)
+            val pBR = Offset(br.screenX * w, br.screenY * h)
+            val pBL = Offset(bl.screenX * w, bl.screenY * h)
+
+            val courtPath = Path().apply {
+                moveTo(pTL.x, pTL.y)
+                lineTo(pTR.x, pTR.y)
+                lineTo(pBR.x, pBR.y)
+                lineTo(pBL.x, pBL.y)
+                close()
+            }
+
+            // Полупрозрачная подсветка зоны корта
+            drawPath(
+                path = courtPath,
+                color = Color(0x2238BDF8)
+            )
+            // Контур корта
+            drawPath(
+                path = courtPath,
+                color = Color(0xFF38BDF8),
+                style = Stroke(
+                    width = 2.dp.toPx(),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 6f), 0f)
+                )
+            )
+
+            // Сетка
+            val netL = Offset((pTL.x + pBL.x) * 0.5f, (pTL.y + pBL.y) * 0.5f)
+            val netR = Offset((pTR.x + pBR.x) * 0.5f, (pTR.y + pBR.y) * 0.5f)
+            drawLine(
+                color = Color.White.copy(alpha = 0.8f),
+                start = netL,
+                end = netR,
+                strokeWidth = 2.dp.toPx()
+            )
+        }
+
+        // Положение детектированного мяча поверх кадра камеры
+        if (isTracking && ballPos != null) {
+            val ballOffset = Offset(ballPos.first * w, ballPos.second * h)
+            drawCircle(
+                color = Color(0xFFEAB308),
+                radius = 9.dp.toPx(),
+                center = ballOffset
+            )
+            drawCircle(
+                color = Color(0xFF22C55E),
+                radius = 18.dp.toPx(),
+                center = ballOffset,
+                style = Stroke(width = 2.5.dp.toPx())
             )
         }
     }

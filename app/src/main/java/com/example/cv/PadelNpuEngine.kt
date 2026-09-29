@@ -9,6 +9,7 @@ import java.io.FileOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
+import java.util.Locale
 
 enum class AccelerationBackend(val title: String, val chipDescription: String) {
     QUALCOMM_NPU_QNN("Hexagon NPU (HTP)", "Qualcomm QNN HTP v75 Burst Mode (Snapdragon 8 Elite)"),
@@ -193,8 +194,8 @@ class PadelNpuEngine(private val context: Context) {
 
         return NpuInferenceStats(
             backend = selectedBackend,
-            inferenceTimeMs = String.format("%.1f", elapsedMs).toFloat(),
-            fps = String.format("%.0f", calculatedFps).toFloat(),
+            inferenceTimeMs = String.format(Locale.US, "%.1f", elapsedMs).toFloat(),
+            fps = String.format(Locale.US, "%.0f", calculatedFps).toFloat(),
             ballDetected = isDetected,
             ballX = ballCandidateNormU,
             ballY = ballCandidateNormV,
